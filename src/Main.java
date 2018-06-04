@@ -7,7 +7,7 @@ public class Main {
 
     //list of vertexes ang edges
     List<Integer> list = new ArrayList<>();
-    List<Integer> blue = new ArrayList<>();
+    List<Integer> visited = new ArrayList<>();
     int vertexNumber = 0;
     int edges = 0;
     int start = 0;
@@ -59,13 +59,13 @@ public class Main {
        
          int cheaper = -1;
          int temp = 0;
-         for(int i = 0; i < arrayOfVertexes.length-1; i++) {
+         for(int i = 0; i < arrayOfVertexes.length-1 ; i++) {
              if (arrayOfVertexes[i].vertex == vertexNumber || arrayOfVertexes[i].vertexConnected == vertexNumber) {
                  temp++;
              }
          }
 
-         //wszystkie miasta polaczone z vertexNumber
+         //all neighbours of the vertex
          Vertex[] neighbours = new Vertex[temp];
          temp = 0;
          for(int i = 0; i < arrayOfVertexes.length-1; i++) {
@@ -78,9 +78,9 @@ public class Main {
              }
          }
 
-         //sorting cities by the lowest cost
+         //sorting vertexes by the lowest cost
          for(int i = 0; i < neighbours.length; i++) {
-             for(int j = 1; j < neighbours.length-i ; i++) {
+             for(int j = 1; j < neighbours.length-i ; j++) {
                  if(neighbours[i].cost > neighbours[j].cost) {
                      Vertex x = neighbours[i];
                      neighbours[i] = neighbours[j];
@@ -92,14 +92,14 @@ public class Main {
          //choosing first grey city
          for(int i = 0; i < neighbours.length; i++) {
              if(neighbours[i].vertex == vertexNumber) {
-                 if(blue.contains(neighbours[i].vertexConnected))
+                 if(visited.contains(neighbours[i].vertexConnected))
                      continue;
                  else {
                      cheaper = neighbours[i].vertexConnected;
                      break;
                  }
              } else if(neighbours[i].vertexConnected == vertexNumber) {
-                 if(blue.contains(neighbours[i].vertex))
+                 if(visited.contains(neighbours[i].vertex))
                      continue;
                  else {
                      cheaper = neighbours[i].vertex;
@@ -112,12 +112,28 @@ public class Main {
 
     void prim() {
         //adding vertex that we start from
-        blue.add(start);
+        visited.add(start);
+
+        int[] path = new int[vertexNumber];
+        path[0] = start;
 
         int cost = 0, cheapest = 0;
-        int mst = 0;
+        int mst = 1;
+        cheapestPath(2);
+
+        while(visited.size() != vertexNumber) {
+            cheapest = cheapestPath(start);
+            visited.add(cheapest);
+            path[mst] = cheapest;
+            mst++;
+            start=cheapest;
+        }
 
 
+
+        for (int i = 0; i < path.length; i++) {
+            System.out.println(path[i]);
+        }
     }
 
     public static void main(String[] args) {
@@ -129,6 +145,6 @@ public class Main {
 
         m.setParameters();
         m.setVertexes();
-
+        m.prim();
     }
 }
